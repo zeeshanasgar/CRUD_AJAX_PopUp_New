@@ -1,0 +1,2 @@
+﻿ALTER TABLE Employee
+ADD Image NVARCHAR(MAX) NULL;

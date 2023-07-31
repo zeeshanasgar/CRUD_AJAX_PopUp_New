@@ -1,0 +1,1091 @@
+﻿@*@model IEnumerable<CRUD_AJAX_PopUp_New.Employee>*@
+
+@model IEnumerable<CRUD_AJAX_PopUp_New.EmployeeTable>
+
+@*@model IEnumerable<CRUD_AJAX_PopUp_New.Salary>*@
+
+@*@model IEnumerable<CRUD_AJAX_PopUp_New.CustomModel>*@
+@*@model CRUD_AJAX_PopUp_New.CustomModel*@
+<link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+<link href="~/Content/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="~/Content/dataTables.bootstrap5.min.css" rel="stylesheet" />
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="~/Content/alertifyjs/alertify.rtl.min.css" rel="stylesheet" />
+
+
+
+@if (ViewBag.msg != null)
+{
+    <div class="alert alert-success">@ViewBag.msg</div>
+}
+
+
+
+@{
+    ViewBag.Title = "Index";
+    var customer = ViewBag.model as CRUD_AJAX_PopUp_New.Employee;
+    //var customer2 = ViewBag.Salary as CRUD_AJAX_PopUp_New.Salary;
+    var jsonData = @Html.Raw(ViewBag.JsonData);
+
+
+    //ViewBag.msg = "Employee Added";
+    //ViewBag.msg = "File size must be Equal or less than 1MB";
+    //ViewBag.msg = "Invalid file type";
+
+}
+
+<h2>Index</h2>
+<h3 class="text-success">@Html.ViewBag.msg</h3>
+<script src="~/Scripts/jquery-3.6.4.slim.min.js"></script>
+<p>
+    @*@Html.ActionLink("Create New", "Create")*@
+    <button class="btn btn-sm btn-primary m-2" id="buttonAddEmployee">Add Employee</button>
+
+    @*working*@
+    @*@using (Html.BeginForm("Export", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <input class="btn btn-sm btn-secondary m-2" type="submit" id="exportData" value="Export Data" />
+        }*@
+
+    <input class="btn btn-sm btn-secondary m-2" type="submit" id="exportData" value="Export Data" />
+
+    <input class="btn btn-sm btn-secondary m-2" type="submit" id="exportCheck" value="Export Selected Data" />
+
+    <div id="downloadLinkContainer"></div>
+
+    <div id="downloadLinkContainerCSV"></div>
+
+</p>
+<table class="table table-bordered table-hover table-striped" id="MyTable">
+    <thead>
+        <tr>
+            <th>Select</th>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Gender)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Designation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.city)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.salary)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Image)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>Operations</th>
+        </tr>
+    </thead>
+    <tbody id="table_data">
+        @*@foreach (var item in Model)*@
+        @*{*@
+        @*<tr>*@
+        @*<td>*@
+        @*<input type="checkbox" class="checkbox" id="check" name="selectedFruits" value="@item.Id"/>*@
+        @*</td>*@
+        @*<td>*@
+        @*@Html.DisplayFor(modelItem => item.Id)*@
+        @*</td>*@
+        @*<td>*@
+        @*@Html.DisplayFor(modelItem => item.Name)*@
+        @*</td>*@
+        @*<td>*@
+        @*@Html.DisplayFor(modelItem => item.Gender)*@
+        @*</td>*@
+        @*<td>*@
+        @*@Html.DisplayFor(modelItem => item.Designation)*@
+        @*</td>*@
+        @*<td>*@
+        @*@Html.DisplayFor(modelItem => item.city)*@
+        @*</td>*@
+        @*<td>*@
+        @*@Html.DisplayFor(modelItem => item.salary)*@
+        @*</td>*@
+        @*<td>*@
+        @*<img src="@Url.Content(item.Image)" width="80" height="80" class="img-rounded" />*@
+        @*<img src="@item.Image" width="80" height="80" class="img-rounded" />*@      @*working for upload*@
+        @*<img src="@@Url.Content(Session["imgPath"].ToString())" width="80" height="80" class="img-rounded" id="updateImage" />*@
+        @*<img src="~/image/321143372_676056190665069_6339594483403755281_n.jpg" width="80" height="80" />*@
+        @*</td>*@
+        @*<td>*@
+        @*@Html.ActionLink("Edit", "Edit", new { id = item.Id }) |*@
+        @*@Html.ActionLink("Details", "Details", new { id = item.Id }) |*@
+        @*@Html.ActionLink("Delete", "Delete", new { id = item.Id })*@
+        @*<input type="button" class="btn btn-danger" onclick="Delete('+ @item.Id +');" value="Delete" />*@
+        @*<input type="button" class="btn btn-secondary" onclick="Edit('+ @item.Id +');" value="Edit" />*@
+        @*</td>*@
+        @*</tr>*@
+        @*}*@
+    </tbody>
+</table>
+
+
+
+
+
+<div class="madal fade modal" id="employeeModel" name="name">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="text-info modal-title" id="EditEmp">ADD Employee</h2>
+                <button class="btn-close text-danger" data-bs-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="formData" method="post" enctype="multipart/form-data" @*sss()*@>
+                    @*<div class="form-group" id="EmpId">
+                            <label>Id</label>
+                            <input type="text" placeholder="Enter Id..." id="Id" class="form-control" disabled="disabled" />
+                        </div>*@
+                    <div class="form-group" id="EmpId">
+                        <label>Id</label>
+                        <input type="text" id="EmployeeId" class="form-control" disabled="disabled" />
+                    </div>
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" placeholder="Enter Name" id="Name" class="form-control" autocomplete="off" />
+                    </div>
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <input type="text" placeholder="Enter Gender" id="Gender" class="form-control" autocomplete="off" />
+                    </div>
+                    <div class="form-group">
+                        <label>Designation</label>
+                        <input type="text" placeholder="Enter Designation" id="Designation" class="form-control" autocomplete="off" />
+                    </div>
+                    <div class="form-group">
+                        <label>City</label>
+                        <input type="text" placeholder="Enter City" id="City" class="form-control" autocomplete="off" />
+                    </div>
+                    @*<div class="form-group">
+                            <label>Salary</label>
+                            <input type="text" placeholder="Enter Salary" id="Salary" class="form-control" autocomplete="off" />
+                        </div>*@
+                    <div class="form-group">
+                        <label>Salary</label>
+                        @*@Html.DropDownListFor(model => model.SalaryId, ViewBag.Salary as SelectList, "-- Select your Salary --", new {@class="form-control"})*@
+                        @*@Html.DropDownList("SalaryId", ViewBag.Salary as SelectList, "-- Select your Salary --", new {@class = "form-control newSalary" })*@
+                        @Html.DropDownList("salary1", ViewBag.Salary as SelectList, "-- Select your Salary --", new { @class = "form-control newSalary" })
+                    </div>
+
+
+                    <div class="form-group">
+                        <label>Image Choose</label>
+                        <input type="file" accept="image/*" name="file" id="file" onchange="LoadImage(this)" required />
+                    </div>
+
+
+
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="text" name="useremail" placeholder="Email" id="Email" class="form-control" autocomplete="off" />
+                        @*@ViewBag.emailerror*@
+                    </div>
+
+
+
+
+
+                    @*by me*@
+                    <div class="form-group">
+                        <label>Preview</label>
+                        <img src="#" name="preview" id="targetImage" width="150" height="150" />
+                    </div>
+
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" type="submit" id="AddEmployee" @*onclick="saveEmployee();*@ @*onclick="SaveImage()"*@>Save</button>
+                <button class="btn btn-warning" id="update" style="display:none" onclick="UpdateEmployee()">Update</button>
+                <button class="btn btn-danger btn-default" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    $(document).ready(function () {
+
+        //function sss() {
+        //$("#formData")
+        //    var form = $('#formData');
+        //    if (!form.checkValidity()) {
+        //        form.reportValidity();
+        //        return;
+        //    }
+        //}
+
+
+        //alertify
+        //    .alert("this is an alert dialog.", function () {
+        //        alertify.message('OK');
+        //    });
+        //alert("hey there");
+
+        //$('#MyTable').dataTable();
+        //ShowEmployeeData();
+
+        //GetEmployeeRecord();
+        localStorage.removeItem("dontClick");
+        BindDataTable();
+
+
+        //$('#MyTable').DataTable(
+        //    {
+        //    //"processing": true, //"Processing... Please Wait"
+        //    "serverSide": true,
+        //    //"sAjaxSource": "/Home/Index",
+        //    //"orderMulti": false,
+        //   /* "dom": '<"top"i>rt<"bottom"lp><"clear">', //for hide default global search*/
+        //    "ajax": {
+        //        "url": "/Home/GetAllEmployee",
+        //        "type": "GET",
+        //        "datatype": "JSON",
+        //    },
+        //    "columns": [
+        //        { "data": null, "name":null, "autowidth":true},
+        //        { "data": "Id", "name":"Id", "autowidth":true},
+        //        { "data": "Name", "name":"Name", "autowidth":true},
+        //        { "data": "Gender", "name":"Gender", "autowidth":true},
+        //        { "data": "Designation", "name":"Designation", "autowidth":true},
+        //        { "data": "city", "name":"city", "autowidth":true},
+        //        { "data": "salary", "name":"salary", "autowidth":true},
+        //        { "data": "Image", "name":"Image", "autowidth":true},
+        //        { "data": "", "name":"", "autowidth":true},
+        //        ],
+        //        "order": [0, "asc"],
+
+        //}
+
+        //);
+
+        //var jsonData = @*@Html.Raw(ViewBag.JsonData);*@
+        //console.log(jsonData);
+        //ShowData();
+    })
+
+
+    GetEmployeeRecord = function () {
+
+        $.ajax({
+            async: true,
+            url: "/Home/GetEmployeeRecord",
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json;charset=utf-8;",
+            success: function (result) {
+                console.log(result);
+                //console.log(result);
+                //var object = '';
+                //$.each(result, function (index, item) {
+                //    object += '<tr>';
+                //    object += '<td>' + '<input type="checkbox" class="checkbox" id="check" name="selectedFruits" value=" ' + item.Id + ' "/>' + '</td>'
+                //    object += '<td>' + item.Id + '</td>'
+                //    object += '<td>' + item.Name + '</td>'
+                //    object += '<td>' + item.Gender + '</td>'
+                //    object += '<td>' + item.Designation + '</td>'
+                //    object += '<td>' + item.city + '</td>'
+                //    object += '<td>' + item.salary + '</td>'
+                //    object += '<td>' + '<img src=" ' + item.Image + '" width="80" height="80" class="img-rounded" />' + '</td>'
+                //    //object += '<td>' +  "<input type=" + 'button ' + " class=" + ' btn btn-danger' + " onclick=" + 'Delete('+ item.Employee_Id +');' + " value=" + ' Delete ' + " />"  + '</td>'
+                //    object += '<td><input type="button" class="btn btn-danger" onclick="Delete(' + item.Id + ');" value="Delete" />   <input type="button" class="btn btn-secondary" onclick="Edit(' + item.Id + ');" value="Edit" /> ' + '</td>'
+                //    //object += ''  + '</td>'
+                //    object += '</tr>';
+
+                //});
+                //$("#table_data").html(object);
+
+                //setTimeout(() => {
+                //    BindDataTable(result);
+                //}, 5000);
+
+                    BindDataTable(result);
+
+            }
+        })
+    }
+
+    var BindDataTable = function (result) {
+        //console.log(result);
+        //debugger;
+        $('#MyTable').dataTable({
+
+            //processing: true,
+            "bServerSide": true,
+            //"sort":true,
+
+            //"lengthMenu": [5, 10, 12, 25, 50, 75, 100],
+
+
+
+            "sAjaxSource": "/Home/GetEmployeeRecord",
+            "fnServerData": function (sSource, aoData, fnCallBack) {
+                $.ajax({
+                    type: "GET",
+                    //data: aoData,
+                    data: aoData,
+                    url: sSource,
+                    success: fnCallBack
+                })
+            },
+            //"aaData": result,
+            "aoColumns": [
+                {
+                    "data": "Id",
+                    "render": function (data, type, row) {
+                        return '<input type="checkbox" onclick=ss(' + data + '); class="checkbox" id=" ' + data + ' " name="selectedFruits" value=" ' + data + ' " />';
+                    }
+                },
+                { "data": "Id" },
+                { "data": "Name" },
+                { "data": "Gender" },
+                { "data": "Designation" },
+                { "data": "city" },
+                { "data": "salary" },
+                //{ "data": "Image" },
+                    {
+                        "data": "Image",
+                    "render": function (data, type, row) {
+                        return '<img src="' + data + '" alt="Image" height="50" width="50">';
+                    }
+                },
+
+
+
+                { "data": "Email" },
+
+
+
+                {
+                    "data": "Id",
+                    "render": function (data, type, row) {
+                        return '<input type="button" class="btn btn-danger" onclick="Delete(' + data + ');" value="Delete" />   <input type="button" class="btn btn-secondary" onclick="Edit(' + data + ');" value="Edit" />';
+                    }
+                }
+
+
+            ]
+            //"paging": true,
+            //"searching": true,
+            //"processing": true,
+            //"serverSide": true,
+            //"ajax": ({
+            //    async: true,
+            //    url:"/Home/GetAllEmployee",
+            //    type: 'post',
+            //    dataType: 'json',
+            //    data: result,
+            //    //contentType: "application/json; charset=utf-8",
+            //    contentType: false,
+            //    processData: false,
+
+            //    columns: [
+            //        { data: result[Designation] },
+            //        { data: result[1] },
+            //        { data: result[2] },
+            //        { data: result[0] },
+            //        { data: result[0] },
+            //        { data: result[0] },
+            //        { data: result[0] },
+            //    //{
+            //    //    "data": Image,
+            //    //    "render": function (data, type, row) {
+            //    //        return '<img src="' + data + '" alt="Image" height="50" width="50">';
+            //    //    }
+            //    //}
+            //]
+
+
+            //}),
+            ////    columns: [
+            ////            //{ data: "yes" },
+            ////        { "data": 'Id' },
+            ////        { "data": 'Name' },
+            ////        { "data": 'Gender' },
+            ////        { "data": 'Designation' },
+            ////        { "data": 'city' },
+            ////        { "data": 'salary' },
+            ////        { "data": 'Image' },
+            ////            //{ data: ""},
+            ////],
+            //        //data:result
+
+        })
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    //implement for showing using ajax
+    //function ShowEmployeeData() {
+    //    $.ajax({
+    //        url: "/Home/GetAllEmployee",
+    //        type: "GET",
+    //        contentType: "application/json; charset=utf-8",
+    //        dataType: "json",
+
+    //        success: function (result) {
+    //            console.log(result);
+    //            var object = '';
+    //            $.each(result, function (index, item) {
+    //                object += '<tr>';
+    //                object += '<td>' + '<input type="checkbox" class="checkbox" id="check" name="selectedFruits" value=" ' + item.Employee_Id + ' "/>' + '</td>'
+    //                object += '<td>' + item.Employee_Id + '</td>'
+    //                object += '<td>' + item.First_Name + '</td>'
+    //                object += '<td>' + item.Genders + '</td>'
+    //                object += '<td>' + item.Design + '</td>'
+    //                object += '<td>' + item.City + '</td>'
+    //                object += '<td>' + item.Salary + '</td>'
+    //                object += '<td>' + '<img src=" ' + item.Images + '" width="80" height="80" class="img-rounded" />' + '</td>'
+    //                //object += '<td>' +  "<input type=" + 'button ' + " class=" + ' btn btn-danger' + " onclick=" + 'Delete('+ item.Employee_Id +');' + " value=" + ' Delete ' + " />"  + '</td>'
+    //                object += '<td><input type="button" class="btn btn-danger" onclick="Delete(' + item.Employee_Id + ');" value="Delete" />   <input type="button" class="btn btn-secondary" onclick="Edit(' + item.Employee_Id +');" value="Edit" /> ' + '</td>'
+    //                //object += ''  + '</td>'
+    //                object += '</tr>';
+
+    //            });
+    //            $("#table_data").html(object);
+    //        },
+    //        error: function () {
+    //            alert("Error");
+    //        }
+    //    })
+    //}
+
+
+
+
+    //function fnCallBack() {
+    //    alert("this is inside success");
+    //}
+
+
+
+
+
+
+
+
+
+    $("#buttonAddEmployee").click(function () {
+
+        $("#employeeModel").modal("show");
+        ClearTextBox();
+        $("#EmpId").hide();
+        $("#EditEmp").text("Add Employee");
+        $("#AddEmployee").css("display", "block");
+        $("#update").css("display", "none");
+
+        $("#updateImage").css("display", "none");
+
+    })
+
+
+    //imagepreview working
+    function LoadImage(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $("#targetImage").attr('src', e.target.result);
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // Add Working
+    $('#AddEmployee').click(function () {
+        //var dataForm = $("#formData").serialize();
+
+        //$("#formData").validate();
+        //if (!form.checkValidity()) {
+        //    form.reportValidity();
+        //    return;
+        //}
+
+
+        //var std = {};
+            //std.Id = $("#Id").val();
+        //std.Id = 0;
+        //std.Name = $("#Name").val();
+        //std.Gender = $("#Gender").val();
+        //std.Designation = $("#Designation").val();
+        //std.city = $("#City").val();
+        //std.salary = $("#Salary").val();
+        //console.log(std);
+
+
+        ////image implementation not working
+        //for saving image
+        //debugger;
+        //var file = $("#file").get(0).files;
+        //var data = new FormData;
+        //data.append("Image", $("#file").val());
+        //data.append("file", file[0]);
+
+        ////working // but useless now
+
+
+
+        var newstd = {
+            //Id: 0,
+            Name: $("#Name").val(),
+            Gender: $("#Gender").val(),
+            Designation: $("#Designation").val(),
+            city: $("#City").val(),
+            //salary: $("#Salary").val(),
+            salary: $(".newSalary").val(),
+            Image: $("#file").val(),
+            //file: $("#file").val(),
+            //file: data
+        };
+        debugger;
+
+        //new implement
+        var filess = $("#file").get(0).files;
+        var formdata = new FormData($('form').get(0));
+
+        //formdata.append("httpPostedFileBase", filess[0]);
+        formdata.append("file", filess[0]);
+        //formdata.append("newstd", JSON.stringify(newstd));
+
+        formdata.append("name", $("#Name").val());
+        formdata.append("Gender", $("#Gender").val());
+        formdata.append("Designation", $("#Designation").val());
+        formdata.append("City", $("#City").val());
+        formdata.append("Salary", $(".newSalary").val());
+        formdata.append("Image", $("#file").val());
+        formdata.append("Email", $("#Email").val())     // new table
+
+        //console.log("-->" + formdata);
+
+        //var valdata = $("#formData").serialize(formdata);
+
+        //var totalFiles = $('#files').files.length;
+        //for (var i = 0; i < totalFiles; i++) {
+        //    var file = $('#formdata').files[i];
+        //    formData.append("httpPostedFileBase", file);
+        //}
+
+        //console.log(newstd);
+        //uploadImage();
+        $.ajax({
+            async: true,
+            type: "POST",
+            url: '@Url.Action("AddEmployee")',
+            dataType: "json",
+            //dataType: "multipart/form-data",
+            //data: JSON.stringify(newstd),
+            //data: $("#formData").serialize(),
+            data: formdata,
+            //contentType: "application/json; charset=utf-8",
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                //window.location.href = '/Home/Index';
+                console.log(result);
+
+
+                alert("Data has been added successfully.",
+                    //$('#targetImage').attr('src', result[0].FilePath),
+                    window.location.reload()
+                );
+
+            },
+
+            error: function () {
+                //window.location.href = '/Home/Index';
+                //alert("Error while inserting data");
+                alert("Please fill Every column");
+                //window.location.reload()
+            }
+        });
+            //alertify.success(
+            //    alertify.alert("Data has been added successfully.", function () {
+            //        //alertify.message('Data has been added successfully.'),
+            //        window.location.reload();
+            //    }),
+            //    //alertify.success('Data has been added successfully.'),
+            // // Reload the page
+            //)
+            //alertify
+            //    .alert("This is an alert dialog.", function () {
+            //        alertify.message('OK');
+            //    });
+
+    })
+
+
+    //function saveEmployee() {
+    //    var Employee = {
+    //        Id: $('#Id').val(),
+    //        Name: $('#Name').val(),
+    //        Gender: $('#Gender').val(),
+    //        Designation: $('#Designation').val(),
+    //        city: $('#City').val(),
+    //        salary: $('#Salary').val()
+    //    }
+    //    $.ajax({
+    //        async: true,
+    //        url: '/Home/AddEmployee',
+    //        type: 'POST',
+    //        dataType: 'JSON',
+    //        //contentType: 'application/xxx-www-form-urlcoded;charset=utf-8',
+    //        data: JSON.stringify(Employee),
+    //        success: function (response) {
+    //            if (response.IsValid == true) {
+    //                //alert(response.Message);
+    //                alert("I am in success");
+    //                //window.location = "/Home/Index";
+    //            }
+    //            else {
+    //                alert(response.ErrorMessage);
+    //            }
+    //        },
+    //        error: function () {
+    //            alert('There is problem to add Employee');
+    //        }
+    //    });
+    //}
+
+    //Clear TextBox
+    function ClearTextBox() {
+        $("#Name").val('');
+        $("#Gender").val('');
+        $("#Designation").val('');
+        $("#City").val('');
+        //$("#Salary").val('');
+        $(".newSalary").val('');
+        $("#Email").val('');
+        $("#targetImage").attr('src', '');
+
+    }
+
+    //delete working
+    function Delete(id) {
+
+        //delete working but not implemented
+        //if (confirm("Are you Sure, You want to delete this record?")) {
+        //    $.ajax({
+        //        async: true,
+        //        url: '/Home/Delete?Id=' + id,
+        //        success: function () {
+        //            alert("Record Deleted");
+        //            //alert(response.Message);
+        //            //window.location = "/Home/Index";
+        //            window.location.reload();
+        //        },
+        //        error: function () {
+        //            alert("Data Not be Deleted");
+        //        }
+        //    })
+        //}
+
+
+        alertify.confirm("Are you Sure, You want to delete this record?",
+            function () {
+                $.ajax({
+                    async: true,
+                    url: '/Home/Delete?Id=' + id,
+
+                    //alertify.alert("Record Deleted")
+                    //alert(response.Message);
+                    //window.location = "/Home/Index",
+                    //window.location.reload();
+                })
+                //alertify.success('Record Deleted');
+                alertify.success (
+                    alertify.success('Record Deleted'),
+                    window.location.reload(), // Reload the page
+                )
+            },
+            //alertify.alert("Record Deleted"),
+            function () {
+                alertify.error('Data Not be Deleted');
+            });
+
+
+
+
+            //working but not implemented due to
+        //if (confirm("Are you Sure, You want to delete this record?")) {
+        //    $.ajax({
+        //        async: true,
+        //        url: '/Home/Delete?Id=' + id,
+        //        success: function () {
+        //            alert("Record Deleted");
+        //            //alert(response.Message);
+        //            //window.location = "/Home/Index";
+        //            window.location.reload();
+        //        },
+        //        error: function () {
+        //            alert("Data Not be Deleted");
+        //        }
+        //    })
+        //}
+
+    }
+
+    //Edit Working
+    function Edit(id) {
+        debugger;
+        //$("#employeeModel").modal('show');
+        //var editstd = {
+        //    //Id: 0,
+        //    Name: $("#Name").val(),
+        //    Gender: $("#Gender").val(),
+        //    Designation: $("#Designation").val(),
+        //    city: $("#City").val(),
+        //    salary: $("#Salary").val(),
+        //};
+        $.ajax({
+            async: true,
+            url: '/Home/Edit?id=' + id,
+            type: 'Get',
+            contentType: "application/json; charset=utf-8",
+            dataType: 'json',
+            //data: { id: id },
+            //data: JSON.stringify(editstd),
+            success: function (response) {
+                //debugger;
+                //alert("heyy");
+                $("#employeeModel").modal('show');
+                $("#EmployeeId").val(response.Id);
+                $("#Name").val(response.Name);
+                $("#Gender").val(response.Gender);
+                $("#Designation").val(response.Designation);
+                $("#City").val(response.city);
+                //$("#Salary").val(response.salary);
+                $(".newSalary").val(response.salary);
+
+                $("#Email").val(response.Email);                // new table
+
+                $("#targetImage").attr('src',response.Image);
+
+                $("#AddEmployee").css("display", "none");
+                $("#update").css("display", "block");
+
+                $("#EditEmp").text("Update Record");
+                $("#EmpId").hide();
+
+                //$("#AddEmployee").hide();
+                //$("#update").show();
+
+                //var editstd = {
+                //    //Id: 0,
+                //    Name: $("#Name").val(),
+                //    Gender: $("#Gender").val(),
+                //    Designation: $("#Designation").val(),
+                //    city: $("#City").val(),
+                //    salary: $("#Salary").val(),
+                //};
+            },
+            error: function () {
+                alert("Data not found");
+            }
+        })
+    }
+
+    //Update Working
+    function UpdateEmployee() {
+        debugger;
+
+        //today implementation working but not update it add more
+        //new implement
+        var filess = $("#file").get(0).files;
+        var formdata = new FormData(/*$('form').get(0)*/);
+
+        //formdata.append("httpPostedFileBase", filess[0]);
+        formdata.append("file", filess[0]);
+        //formdata.append("newstd", JSON.stringify(newstd));
+
+        formdata.append("Id", $("#EmployeeId").val());
+        formdata.append("name", $("#Name").val());
+        formdata.append("Gender", $("#Gender").val());
+        formdata.append("Designation", $("#Designation").val());
+        formdata.append("City", $("#City").val());
+        formdata.append("Salary", $(".newSalary").val());
+        formdata.append("Image", $("#file").val())
+
+        formdata.append("Email", $("#Email").val());                // new table
+        //today implementation
+
+
+
+        // working but not implement here
+        var Updatestd = {
+            Id: $("#EmployeeId").val(),
+            Name: $("#Name").val(),
+            Gender: $("#Gender").val(),
+            Designation: $("#Designation").val(),
+            city: $("#City").val(),
+            //salary: $("#Salary").val(),
+            salary: $(".newSalary").val(),
+            Image: $("#file").val(),
+        }
+        $.ajax({
+            async: true,
+            url: '/Home/Update',
+            type: 'post',
+            dataType: "json",
+            //data: JSON.stringify(Updatestd),
+            data: formdata,
+            //data: Updatestd,
+            //contentType: "application/json; charset=utf-8",
+            contentType: false,
+            processData: false,
+            //contentType: false,
+
+            //success: function (result) {
+            //    console.log(result);
+            //    alert("Data has been Updated successfully.",
+            //        window.location.reload(),
+            //        ClearTextBox()
+            //    );
+            //},
+        })
+        alertify.success("Data has been Updated successfully.",
+            alertify.alert("Data has been Updated successfully.", function () {
+                //alertify.message('Data has been added successfully.'),
+                window.location.reload();
+            }),
+            //alertify.success('Data has been added successfully.'),
+            // Reload the page
+        )
+    }
+
+
+
+    //// exporting data working
+    //$("#exportData").click(function () {
+    //    //alert("I am in exporting data");
+    //    $.ajax({
+    //        url: "/Home/Export",
+    //        type: "GET",
+    //        success: function (response) {
+    //            alert("Data Exported Successfully, You can download by clicking link below");
+    //            var downloadLink = '<a href="' + response + '">Download CSV</a>';
+    //            $("#downloadLinkContainer").html(downloadLink);
+    //        },
+
+    //        error: function (xhr, status, error) {
+    //            console.log("Error occurred while exporting data: " + error);
+    //        }
+    //    })
+    //});
+
+
+    $("#exportData").click(function () {
+        alertify.confirm("Are you sure, Do you want to export all data", function () {
+            $.ajax({
+                url: "/Home/Export",
+                type: "GET",
+                //success: function (response) {
+                //    alert("Data Exported Successfully, You can download by clicking link below");
+                //    var downloadLink = '<a href="' + response + '">Download CSV</a>';
+                //    $("#downloadLinkContainer").html(downloadLink);
+                //},
+                success: function (response) {
+                    alertify.alert("Data Exported Successfully. You can download by clicking the link below", function () {
+                        var downloadLink = '<a href="' + response + '">Download CSV</a>';
+                        $("#downloadLinkContainer").html(downloadLink);
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error occurred while exporting data: " + error);
+                }
+            });
+
+        });
+    })
+
+
+
+
+
+
+
+
+
+    //export check box data working but not implemented
+    //$("#exportCheck").click(function () {
+    //    alert("I am in selected exporting data ");
+    //    var selectedFruits = $("input[name='selectedFruits']:checked").map(function () {
+    //        return this.value;
+    //    }).get();
+    //    $.ajax({
+    //        url: '/Home/ExportCheck',
+    //        type: 'POST',
+    //        //data: { selectedFruits: selectedFruits },
+    //        data: JSON.stringify({ selectedFruits: selectedFruits }),
+    //        //traditional: true,
+    //        contentType: "application/json; charset=utf-8",
+    //        success: function (response) {
+    //            alert("I am in Selected CSV success");
+    //            alert(selectedFruits);
+    //            var downloadLink = '<a href= "' + response + '">Download SelectedData Here</a> ';
+    //            $("#downloadLinkContainerCSV").html(downloadLink);
+    //        },
+    //        error: function (xhr, status, error) {
+    //            alert("Error occured while exporting data");
+    //        }
+    //    })
+    //})
+
+
+
+
+    ////implement for Select CheckBox
+    //$("#exportCheck").click(function () {
+    //    alert("I am in selected exporting data ");
+
+    //    var selectedFruits = $("input[name='selectedFruits']:checked").map(function () {
+    //        return this.value;
+    //    }).get();
+
+    //    $.ajax({
+    //        url: '/Home/ExportCheck',
+    //        type: 'POST',
+    //        //data: { selectedFruits: selectedFruits },
+    //        data: JSON.stringify({ selectedFruits: selectedFruits }),
+    //        //traditional: true,
+    //        contentType: "application/json; charset=utf-8",
+    //        success: function (response) {
+    //            alert("I am in Selected CSV success");
+    //            alert(selectedFruits);
+    //            var downloadLink = '<a href= "' + response + '">Download SelectedData Here</a> ';
+
+    //            /*localStorage.setItem("harkch", selectedFruits);*/
+    //            $("#downloadLinkContainerCSV").html(downloadLink);
+    //        },
+    //        error: function (xhr, status, error) {
+    //            alert("Error occured while exporting data");
+    //        }
+    //    })
+
+    //})
+
+
+    //implementation for localstorage
+    //$('#check').on('change', function () {
+    //    var checkboxId = $("input[name='selectedFruits']:checked").map(function () {
+    //        return this.value;
+    //    }).get(); // Get the unique identifier of the checkbox
+    //    var isChecked = $(this).is(':checked'); // Check if the checkbox is checked or not
+
+    //    // Update the local storage with the checked value
+    //    localStorage.setItem(this.value, checkboxId);
+    //});
+
+    //$("#check").change(function () {
+    //        var checkboxId = $("input[name='selectedFruits']:checked").map(function () {
+    //        return this.value;
+    //        }).get(); // Get the unique identifier of the checkbox
+
+    //    localStorage.setItem(this.value, checkboxId);
+    //})
+
+
+
+    //by sir  and working
+    function ss(checkboxId) {
+        let aarr = [];
+        $('#' + checkboxId)/*.is(":checked")*/
+        {
+            let getItem = localStorage.getItem("dontClick");
+            if (getItem != null) {
+                let localstoragedata = JSON.parse(getItem);
+                    if (!aarr.includes(checkboxId.toString()) && localstoragedata.length != 0) {
+                        console.log("false5");
+                        aarr.push(checkboxId);
+                        for (let i = 0; i < localstoragedata.length; i++) {
+                            aarr.push(localstoragedata[i]);
+                        }
+
+                        localStorage.setItem("dontClick", JSON.stringify(aarr));
+                    } else {
+                        aarr.push(checkboxId);
+                        console.log("false2")
+                        localStorage.setItem("dontClick", JSON.stringify(aarr));
+                    }
+            } else {
+                console.log("false")
+                aarr.push(checkboxId);
+                localStorage.setItem("dontClick", JSON.stringify(aarr));
+            }
+
+        }
+    }
+
+    //implement for Select CheckBox
+    $("#exportCheck").click(function () {
+        alert("I am in selected exporting data ");
+
+        //var selectedFruits = $("input[name='selectedFruits']:checked").map(function () {
+        //    return this.value;
+        //}).get();
+
+        //ss();
+
+        //let getItem = localStorage.getItem("harckch");
+        //console.log(getItem);
+
+
+        let v = localStorage.getItem("dontClick");
+        console.log(v);
+
+
+        $.ajax({
+            url: '/Home/ExportCheck',
+            type: 'POST',
+            //data: { selectedFruits: selectedFruits },
+            //data: JSON.stringify({ selectedFruits: selectedFruits }),
+            //data: JSON.stringify(v),
+            data: v,
+            //traditional: true,
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                alert("I am in Selected CSV success");
+                alert(v);
+                var downloadLink = '<a href= "' + response + '">Download SelectedData Here</a> ';
+
+                /*localStorage.setItem("harkch", selectedFruits);*/
+                $("#downloadLinkContainerCSV").html(downloadLink);
+
+                localStorage.removeItem("dontClick");
+
+            },
+            error: function (xhr, status, error) {
+                alert("Error occured while exporting data");
+            }
+        })
+
+    })
+
+
+</script>
+
+<script src="~/Scripts/jquery-3.6.4.min.js"></script>
+<script src="~/Scripts/jquery.dataTables.min.js"></script>
+<script src="~/Scripts/dataTables.bootstrap5.min.js"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>
+<script src="~/Scripts/alertify.min.js"></script>
